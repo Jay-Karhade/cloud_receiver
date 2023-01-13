@@ -1,0 +1,89 @@
+# The tmux session name, has to be unique
+session_name: pt_start
+
+# Add commands to bash history
+suppress_history: false
+
+# set environment variables
+# environment:
+#   robot: ${robot}
+
+# starting directory location, to run all commands from
+start_directory: /home/jay/catkin_ws
+
+# commands to run before panes startup
+# before_script: $MMPUG_OPERATIONS/mmpug_utils/scripts/tmux_bootstrap.bash -sp -ar -st -- mmpug_autonomy mmpug_estimation mmpug_drivers mmpug_common
+
+# This is where we list all the stuff we want to run
+windows:
+  - window_name: Datasets and run algorithm
+    focus: false
+    layout: main-horizontal
+    panes:
+      - shell_command:
+        - sleep 10
+        - cd /home/jay/Downloads/datasets
+        # - rosbag play sqh.bag --topic  /cmu_rc7/imu/data /cmu_rc7/velodyne_packets / 
+        #    /cmu_rc7/imu/data:=/imu/data /cmu_rc7/velodyne_packets:=/velodyne_packets --clock             
+
+        - rosbag play hawkins.bag --topic /cmu_rc2/camera_1/image_raw  /
+           /cmu_rc2/imu/data /cmu_rc2/velodyne_packets   /
+           /cmu_rc2/camera_1/image_raw:=/camera_1/image_raw / 
+           /cmu_rc2/imu/data:=/imu/data /cmu_rc2/velodyne_packets:=/velodyne_packets --clock             
+
+      # - shell_command:
+      #   - sleep 5
+      #   - conda deactivate
+      #   - /home/jay/catkin_ws
+      #   - source devel/setup.bash
+      #   - rosrun extract_scans extract_bin.py
+
+      - shell_command:
+        - sleep 10
+        - /home/jay/catkin_ws
+        - source devel/setup.bash
+        - roslaunch velodyne_launch velodyne.launch   
+
+      - shell_command:
+        - sleep 15
+        - /home/jay/catkin_ws
+        - source devel/setup.bash 
+        - roslaunch super_odometry ugv_offline.launch 
+
+      - shell_command:
+        - sleep 15
+        - /home/jay/catkin_ws
+        - source devel/setup.bash 
+        - roslaunch vins_estimator cam1_debug.launch 
+      - shell_command:
+        - sleep 5
+        - /home/jay/catkin_ws
+        - source devel/setup.bash
+        - roslaunch slam_tools superodom_playback.launch
+    
+      - shell_command:
+        - sleep 5
+        - /home/jay/catkin_ws
+        - source devel/setup.bash
+        - roslaunch super_loop ledger_demo.launch
+
+      - shell_command:
+        - sleep 1
+        - /home/jay/catkin_ws
+        - source devel/setup.bash
+        - roslaunch super_loop cloud_receiver.launch
+
+  # comms manager
+  - window_name: visualization
+    focus: false
+    layout: main-horizontal
+    panes:
+      - shell_command:
+        - roscore  
+      - shell_command:
+        - sleep 10
+        - /home/jay/catkin_ws
+        - cd src/subt_state_estimation/
+        - rviz -d debug_lc.rviz
+
+
