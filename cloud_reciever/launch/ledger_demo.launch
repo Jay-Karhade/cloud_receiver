@@ -1,0 +1,41 @@
+<launch>
+
+  <arg name="robot_name" default="uav1" />
+  
+  <rosparam param="/robots">
+    uav1: 1
+    uav2: 2
+    uav3: 3
+    basestation: 4
+  </rosparam>
+  
+  <param name="use_sim_time" type="bool" value="true" />
+  
+  <!-- UAV 1 -->
+  <param name="robot_name" type="string" value="$(arg robot_name)" />
+  <param name="computer_count" type="int" value="1" />
+    
+  <node name="data_sender" pkg="map_database" type="data_sender"  >
+    <param name="execute_target" value="1.0" />
+
+    <param name="initial_bandwidth_estimate" type="int" value="500000" />
+    <param name="increase_attempt_percentage" type="double" value="1.25" />
+    <param name="history_duration" type="double" value="10." />
+    <param name="connection_timeout" type="double" value="15." />
+    <param name="timeout_duration" type="double" value="20." />
+    <param name="ledger_send_delay" type="double" value="5." />
+    
+    <!-- blacklist -->
+    <rosparam param="entity_blacklist">[]</rosparam>
+    <rosparam param="map_data_type_blacklist">[]</rosparam>
+  </node>
+
+  <node name="data_receiver" pkg="map_database" type="data_receiver"  >
+    <param name="execute_target" value="1.0" />
+  </node>
+
+  <!-- <include file="$(find communication_manager)/launch/communication_manager.launch">
+    <arg name="computer" value="$(arg robot_name)" />
+  </include> -->
+
+</launch>

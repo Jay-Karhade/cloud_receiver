@@ -1,0 +1,12 @@
+<launch>
+
+  <param name="use_sim_time" type="bool" value="true" />
+
+  <node name="receive_clouds" pkg="cloud_reciever" type="receive_clouds"  >
+  </node>
+
+  <!-- <include file="$(find communication_manager)/launch/communication_manager.launch">
+    <arg name="computer" value="$(arg robot_name)" />
+  </include> -->
+
+</launch>
